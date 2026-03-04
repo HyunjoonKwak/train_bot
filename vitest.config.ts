@@ -6,5 +6,8 @@ export default defineConfig({
     include: ['src/server/__tests__/**/*.test.ts'],
     setupFiles: ['src/server/__tests__/setup.ts'],
     pool: 'forks',
+    env: {
+      LOG_LEVEL: 'error',
+    },
   },
 });
