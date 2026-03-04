@@ -6,7 +6,7 @@ services:
     container_name: trainbot
     restart: unless-stopped
     ports:
-      - '3100:3000'
+      - '3300:3000'
     volumes:
       - ../data:/data
     env_file:
