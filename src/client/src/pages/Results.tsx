@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Card, LoadingSpinner, StatusBadge, EmptyState } from '../components/common';
 import { api } from '../api/client';
-import type { Run, PaginatedResponse } from '../types';
+import type { Run, TrainResult, Recommendation, PaginatedResponse } from '../types';
 
 function kstDateString(): string {
   return new Date().toLocaleDateString('sv-SE', { timeZone: 'Asia/Seoul' });
@@ -22,6 +22,8 @@ export default function Results() {
     trainType: 'SRT' as 'SRT' | 'KTX' | 'ALL',
   });
   const [searching, setSearching] = useState(false);
+  const [searchResults, setSearchResults] = useState<TrainResult[]>([]);
+  const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
   const limit = 10;
 
   const loadRuns = async (p: number = 1) => {
@@ -45,8 +47,14 @@ export default function Results() {
 
   const handleSearch = async () => {
     setSearching(true);
+    setSearchResults([]);
+    setRecommendations([]);
     try {
-      await api.post('/runs', searchForm);
+      const res = await api.post<{ runId: number; results: TrainResult[]; recommendations: Recommendation[] }>('/runs', searchForm);
+      if (res.data) {
+        setSearchResults(res.data.results ?? []);
+        setRecommendations(res.data.recommendations ?? []);
+      }
       await loadRuns(1);
     } catch (err) {
       if (err instanceof Error && err.message !== 'Unauthorized') {
@@ -118,6 +126,65 @@ export default function Results() {
           </div>
         </div>
       </Card>
+
+      {/* Search Results */}
+      {searchResults.length > 0 && (
+        <Card title={`조회 결과 (${searchResults.length}건)`}>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-gray-200">
+                  <th className="text-left py-3 px-2 font-medium text-gray-600">열차</th>
+                  <th className="text-left py-3 px-2 font-medium text-gray-600">출발</th>
+                  <th className="text-left py-3 px-2 font-medium text-gray-600">도착</th>
+                  <th className="text-left py-3 px-2 font-medium text-gray-600">소요시간</th>
+                  <th className="text-left py-3 px-2 font-medium text-gray-600">가격</th>
+                  <th className="text-left py-3 px-2 font-medium text-gray-600">좌석</th>
+                  <th className="text-left py-3 px-2 font-medium text-gray-600">추천</th>
+                </tr>
+              </thead>
+              <tbody>
+                {searchResults.map((train, idx) => {
+                  const rec = recommendations.find(r => r.train.trainNumber === train.trainNumber && r.train.departureTime === train.departureTime);
+                  return (
+                    <tr key={idx} className={`border-b border-gray-50 hover:bg-gray-50 ${rec ? 'bg-purple-50' : ''}`}>
+                      <td className="py-3 px-2">
+                        <span className="font-medium">{train.trainType}</span>
+                        <span className="text-gray-500 ml-1">{train.trainNumber}</span>
+                      </td>
+                      <td className="py-3 px-2">
+                        <div className="font-medium">{train.departureTime}</div>
+                        <div className="text-xs text-gray-500">{train.departureStation}</div>
+                      </td>
+                      <td className="py-3 px-2">
+                        <div className="font-medium">{train.arrivalTime}</div>
+                        <div className="text-xs text-gray-500">{train.arrivalStation}</div>
+                      </td>
+                      <td className="py-3 px-2 text-gray-600">{train.duration}</td>
+                      <td className="py-3 px-2">{train.price > 0 ? `${train.price.toLocaleString()}원` : '-'}</td>
+                      <td className="py-3 px-2">
+                        <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${train.seatAvailable ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                          {train.seatAvailable ? '있음' : '매진'}
+                        </span>
+                      </td>
+                      <td className="py-3 px-2">
+                        {rec && (
+                          <div>
+                            <span className="inline-block px-2 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-700">
+                              {rec.score}점
+                            </span>
+                            <div className="text-xs text-gray-500 mt-0.5">{rec.reason}</div>
+                          </div>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </Card>
+      )}
 
       {/* Results List */}
       <Card title="실행 기록">
