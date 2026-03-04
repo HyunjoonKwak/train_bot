@@ -34,16 +34,20 @@ export function createTestUser(overrides?: Partial<{
   return Number(result.lastInsertRowid);
 }
 
+let testAppCounter = 0;
+
 export function createTestApp(userOverrides?: Partial<SessionUser>): Express {
+  testAppCounter++;
+  const kakaoId = userOverrides?.kakaoId ?? `test_kakao_app_${testAppCounter}`;
   const userId = createTestUser({
-    kakao_id: userOverrides?.kakaoId ?? 'test_kakao_123',
+    kakao_id: kakaoId,
     nickname: userOverrides?.nickname ?? 'TestUser',
     role: userOverrides?.role ?? 'ADMIN',
   });
 
   const testUser: SessionUser = {
     id: userId,
-    kakaoId: userOverrides?.kakaoId ?? 'test_kakao_123',
+    kakaoId: kakaoId,
     nickname: userOverrides?.nickname ?? 'TestUser',
     profileImage: userOverrides?.profileImage ?? null,
     role: userOverrides?.role ?? 'ADMIN',
