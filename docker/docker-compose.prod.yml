@@ -1,16 +1,14 @@
 services:
   trainbot:
-    build:
-      context: ..
-      dockerfile: docker/Dockerfile
+    image: ghcr.io/${GHCR_USERNAME:-hyunjoonkwak}/trainbot:${IMAGE_TAG:-latest}
     container_name: trainbot
     restart: unless-stopped
     ports:
       - '3100:3000'
     volumes:
-      - ../data:/data
+      - ./data:/data
     env_file:
-      - ../.env
+      - .env
     environment:
       - NODE_ENV=production
       - TZ=Asia/Seoul
