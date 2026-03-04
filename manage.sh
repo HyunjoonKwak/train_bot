@@ -23,7 +23,7 @@ log_error() { echo -e "${RED}[ERROR]${NC} $1"; }
 start() {
     log_info "Starting ${APP_NAME}..."
     docker compose -f "$COMPOSE_FILE" up -d
-    log_info "Started. http://localhost:3300"
+    log_info "Started. http://localhost:3600"
 }
 
 stop() {
@@ -49,7 +49,7 @@ rebuild() {
     docker compose -f "$COMPOSE_FILE" down
     docker compose -f "$COMPOSE_FILE" build $NO_CACHE
     docker compose -f "$COMPOSE_FILE" up -d
-    log_info "Rebuild complete. http://localhost:3300"
+    log_info "Rebuild complete. http://localhost:3600"
 }
 
 logs() {

@@ -332,7 +332,7 @@ TrainBot 시스템 구성도:
       │   ├─ Frontend: React 18+ (Vite, Tailwind CSS)
       │   ├─ Backend: Node.js/Express (TypeScript)
       │   ├─ Scheduler: node-cron
-      │   └─ Port: 3100
+      │   └─ Port: 3600
       ├─ Volume Mount: /data
       │   ├─ trainbot.db (SQLite WAL mode)
       │   ├─ .env.credentials (파일 권한 600)
