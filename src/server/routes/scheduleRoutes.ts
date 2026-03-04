@@ -5,6 +5,7 @@ import { requireAuth, requireRole } from '../middleware/auth.js';
 import { validateBody, validateParams } from '../middleware/validate.js';
 import { createScheduleSchema, updateScheduleSchema, idParamSchema } from '../schemas/index.js';
 import { CronManager } from '../infrastructure/scheduler/cronManager.js';
+import { toCamelArray } from '../utils/index.js';
 
 export function createScheduleRoutes(): Router {
   const router = Router();
@@ -13,7 +14,7 @@ export function createScheduleRoutes(): Router {
   // GET /api/schedules — list all schedules
   router.get('/', requireAuth, (_req: Request, res: Response) => {
     const schedules = scheduleService.getAll();
-    res.json({ success: true, data: schedules });
+    res.json({ success: true, data: toCamelArray(schedules) });
   });
 
   // POST /api/schedules — create a schedule (admin only)

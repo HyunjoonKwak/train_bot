@@ -4,6 +4,7 @@ import { WeekPlanService } from '../services/weekPlanService.js';
 import { requireAuth } from '../middleware/auth.js';
 import { validateBody, validateParams } from '../middleware/validate.js';
 import { updateWeekPlanSchema, bulkUpdateWeekPlanSchema, weekPlanParamSchema } from '../schemas/index.js';
+import { toCamelArray } from '../utils/index.js';
 
 /** Get KST date string (YYYY-MM-DD) */
 function kstDateString(d: Date = new Date()): string {
@@ -24,13 +25,13 @@ export function createWeekPlanRoutes(): Router {
     })();
 
     const plans = weekPlanService.getWeekPlans(req.user!.id, startDate, endDate);
-    res.json({ success: true, data: plans });
+    res.json({ success: true, data: toCamelArray(plans) });
   });
 
   // GET /api/week-plans/upcoming — upcoming plans needing action
   router.get('/upcoming', requireAuth, (req: Request, res: Response) => {
     const plans = weekPlanService.getUpcoming(req.user!.id);
-    res.json({ success: true, data: plans });
+    res.json({ success: true, data: toCamelArray(plans) });
   });
 
   // PUT /api/week-plans/:date/:direction — update a single plan

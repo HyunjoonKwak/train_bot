@@ -4,6 +4,7 @@ import { UserService } from '../services/userService.js';
 import { requireAuth, requireRole } from '../middleware/auth.js';
 import { validateBody, validateParams } from '../middleware/validate.js';
 import { updateUserRoleSchema, idParamSchema } from '../schemas/index.js';
+import { toCamelArray } from '../utils/index.js';
 
 export function createUserRoutes(): Router {
   const router = Router();
@@ -12,7 +13,7 @@ export function createUserRoutes(): Router {
   // GET /api/users — list all users (admin only)
   router.get('/', requireAuth, requireRole('ADMIN'), (_req: Request, res: Response) => {
     const users = userService.getAll();
-    res.json({ success: true, data: users });
+    res.json({ success: true, data: toCamelArray(users) });
   });
 
   // PATCH /api/users/:id/role — update user role (admin only)

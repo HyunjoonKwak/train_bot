@@ -4,6 +4,7 @@ import { AuditService } from '../services/auditService.js';
 import { requireAuth, requireRole } from '../middleware/auth.js';
 import { validateQuery } from '../middleware/validate.js';
 import { paginationSchema } from '../schemas/index.js';
+import { toCamelArray } from '../utils/index.js';
 
 export function createAuditRoutes(): Router {
   const router = Router();
@@ -18,7 +19,7 @@ export function createAuditRoutes(): Router {
     const { rows, total } = auditService.getAll({ page, limit, action, userId });
     res.json({
       success: true,
-      data: rows,
+      data: toCamelArray(rows),
       pagination: {
         page,
         limit,

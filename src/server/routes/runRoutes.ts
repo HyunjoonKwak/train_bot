@@ -4,6 +4,7 @@ import { RunService } from '../services/runService.js';
 import { requireAuth } from '../middleware/auth.js';
 import { validateBody, validateQuery, validateParams } from '../middleware/validate.js';
 import { createRunSchema, paginationSchema, idParamSchema } from '../schemas/index.js';
+import { toCamel, toCamelArray } from '../utils/index.js';
 
 export function createRunRoutes(): Router {
   const router = Router();
@@ -36,7 +37,7 @@ export function createRunRoutes(): Router {
     const { rows, total } = runService.getAll({ page, limit, status });
     res.json({
       success: true,
-      data: rows,
+      data: toCamelArray(rows),
       pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
     });
   });
@@ -45,7 +46,7 @@ export function createRunRoutes(): Router {
   router.get('/recent', requireAuth, (req: Request, res: Response) => {
     const limit = Math.min(Math.max(Number(req.query.limit) || 10, 1), 100);
     const runs = runService.getRecent(limit);
-    res.json({ success: true, data: runs });
+    res.json({ success: true, data: toCamelArray(runs) });
   });
 
   // GET /api/runs/stats — today's stats
@@ -62,7 +63,7 @@ export function createRunRoutes(): Router {
       res.status(404).json({ success: false, error: '실행 기록을 찾을 수 없습니다.' });
       return;
     }
-    res.json({ success: true, data: run });
+    res.json({ success: true, data: toCamel(run as unknown as Record<string, unknown>) });
   });
 
   return router;

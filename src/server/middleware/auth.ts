@@ -9,6 +9,11 @@ export function getDebugUser() {
   if (!cachedDebugUser) {
     const repo = new UserRepository();
     const user = repo.upsertByKakaoId('debug', 'Debug User', null);
+    // Ensure debug user has ADMIN role
+    if (user.role !== 'ADMIN') {
+      repo.updateRole(user.id, 'ADMIN');
+      user.role = 'ADMIN';
+    }
     cachedDebugUser = { id: user.id, kakaoId: user.kakao_id, nickname: user.nickname, profileImage: user.profile_image, role: user.role as UserRole };
   }
   return cachedDebugUser;
