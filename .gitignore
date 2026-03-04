@@ -1,0 +1,12 @@
+node_modules/
+dist/
+data/trainbot.db
+data/trainbot.db-wal
+data/trainbot.db-shm
+data/.env.credentials
+data/logs/*.log
+data/backups/
+.env
+.env.local
+*.tgz
+.DS_Store

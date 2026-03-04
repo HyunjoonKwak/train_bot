@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  trainbot:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: trainbot
+    restart: unless-stopped
+    ports:
+      - '3000:3000'
+    volumes:
+      - trainbot-data:/data
+    env_file:
+      - ../.env
+    environment:
+      - NODE_ENV=production
+      - TZ=Asia/Seoul
+      - DB_PATH=/data/trainbot.db
+      - LOG_DIR=/data/logs
+
+volumes:
+  trainbot-data:
+    driver: local
