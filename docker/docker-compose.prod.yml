@@ -6,9 +6,9 @@ services:
     ports:
       - '3100:3000'
     volumes:
-      - ./data:/data
+      - ../data:/data
     env_file:
-      - .env
+      - ../.env
     environment:
       - NODE_ENV=production
       - TZ=Asia/Seoul
