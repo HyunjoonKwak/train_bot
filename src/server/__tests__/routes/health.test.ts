@@ -1,8 +1,15 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import request from 'supertest';
-import app from '../../app.js';
+import type { Express } from 'express';
+import { createApp } from '../../app.js';
 
 describe('Health & Auth guards', () => {
+  let app: Express;
+
+  beforeEach(() => {
+    app = createApp();
+  });
+
   it('GET /api/health returns 200 with status ok', async () => {
     const res = await request(app).get('/api/health');
     expect(res.status).toBe(200);

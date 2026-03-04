@@ -1,4 +1,7 @@
+import type { Express } from 'express';
 import { DatabaseManager } from '../infrastructure/database/connection.js';
+import { createApp } from '../app.js';
+import type { SessionUser } from '../types/index.js';
 import type Database from 'better-sqlite3';
 
 export function getTestDb(): Database.Database {
@@ -29,4 +32,27 @@ export function createTestUser(overrides?: Partial<{
     overrides?.role ?? 'ADMIN',
   );
   return Number(result.lastInsertRowid);
+}
+
+export function createTestApp(userOverrides?: Partial<SessionUser>): Express {
+  const userId = createTestUser({
+    kakao_id: userOverrides?.kakaoId ?? 'test_kakao_123',
+    nickname: userOverrides?.nickname ?? 'TestUser',
+    role: userOverrides?.role ?? 'ADMIN',
+  });
+
+  const testUser: SessionUser = {
+    id: userId,
+    kakaoId: userOverrides?.kakaoId ?? 'test_kakao_123',
+    nickname: userOverrides?.nickname ?? 'TestUser',
+    profileImage: userOverrides?.profileImage ?? null,
+    role: userOverrides?.role ?? 'ADMIN',
+  };
+
+  return createApp({
+    preRouteMiddleware: [(_req, _res, next) => {
+      _req.user = testUser;
+      next();
+    }],
+  });
 }
