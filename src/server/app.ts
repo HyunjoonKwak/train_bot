@@ -18,6 +18,7 @@ import { createRunRoutes } from './routes/runRoutes.js';
 import { createWeekPlanRoutes } from './routes/weekPlanRoutes.js';
 import { createScheduleRoutes } from './routes/scheduleRoutes.js';
 import { createAuditRoutes } from './routes/auditRoutes.js';
+import { createTrainRoutes } from './routes/trainRoutes.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -96,6 +97,7 @@ export function createApp(options?: CreateAppOptions): Express {
   app.use('/api/week-plans', createWeekPlanRoutes());
   app.use('/api/schedules', createScheduleRoutes());
   app.use('/api/audit-logs', createAuditRoutes());
+  app.use('/api/train', createTrainRoutes());
 
   // Serve static files in production (before error handler so SPA fallback works)
   if (process.env.NODE_ENV === 'production') {

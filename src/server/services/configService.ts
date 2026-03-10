@@ -3,7 +3,10 @@ import { AuditService } from './auditService.js';
 import { AppError } from '../middleware/errorHandler.js';
 
 // Config keys that should have their values redacted in audit logs
-const SENSITIVE_KEYS = new Set(['api_key', 'api_secret', 'telegram_token', 'session_secret']);
+const SENSITIVE_KEYS = new Set([
+  'api_key', 'api_secret', 'telegram_token', 'session_secret',
+  'srt_password', 'korail_password',
+]);
 
 export class ConfigService {
   private repo: ConfigRepository;
